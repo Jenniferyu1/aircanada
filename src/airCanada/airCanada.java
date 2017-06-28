@@ -134,59 +134,53 @@ public class airCanada {
     	//wait search result
     	wait.until(ExpectedConditions.urlMatches("https://www.aircanada.com/ca/en/aco/home.html#/faredriven:0"));
     	
-    	findGoodDeal("5:00");
+    	findGoodDeal("05:00");
         // Look for in the results
         return result;
     }
 
     public static void findGoodDeal(String afterTime){
-    	//li: class=ac_itinerary , parent div id flightDetailInfo0, div, ul
     	int low=0;
     	int priceInt;
-    	int i=0;
+    	int counter=0;
     	WebElement priceE;
-    	WebElement priceP;
-    	WebElement timeE;
-    	WebElement timeEP;
     	WebElement lowElem=null;
     	String timeN;
-    	String timeParent="li[@class='ac_itinerary']/div[@id='ac_itinerary-info-0-3']";
-    	String priceParent="col-lg-3 col-md-3 col-sm-3 col-xs-12 ac_rol-price ac_econ-core";
-    	String timePath="div[@class='col-lg-12 col-md-12 col-sm-12 col-xs-12']/div[@class='ac_flight_info']/span[@class='ac_time-box']/span[@class='ac_time_box_time font_face_b']";
-    	String pricePath="li[@class='col-lg-3 col-md-3 col-sm-3 col-xs-12 ac_rol-price ac_econ-core']/a/span/span";
-    	WebElement departE=driver.findElement(By.id("avail_bound_main_0"));
-    	List<WebElement> elements=departE.findElements(By.xpath("//div[@id='flightDetailInfo0']/div/ul/li[@class='ac_itinerary']"));
-    	for (WebElement ele : elements){
-    		i=i+1;
+    	String timePath="./ul/li/div[@class='ac_itinerary-info col-sm-6 col-lg-6 col-md-6']/div[@class='row']/div/div/div/div/div/div/span[@class='ac_time-box']/span[@class='ac_time_box_time font_face_b']";
+    	
+    	String pricePath="//a[@class='ac_btn-fare-price active-fare']/span[@class='ac_price font_face_l is_bold_fare']/span";
+    	String ecoAPath="//*[@id='flightDetailInfo0']/div[2]/ul/li[@class='ac_itinerary']/ul/li[2]/a";
+    	WebElement timeEAncent=driver.findElements(By.xpath("//div[@style='overflow:hidden;']")).get(0);
+    	List<WebElement> timeEs=timeEAncent.findElements(By.xpath(timePath));
+    	List<WebElement> priceEs=driver.findElements(By.xpath(pricePath));
+    	
+    	List<WebElement> ecoA=driver.findElements(By.xpath(ecoAPath));
+    	
+    	for (WebElement ele : timeEs){
     		try {
-    			//time comparison
-    			timeEP=ele.findElement(By.xpath(timeParent));
-    			timeE=timeEP.findElement(By.xpath(timePath));
-    			timeN=timeE.getText();
+    			timeN=ele.getText();
     			if (timeAfter(timeN, afterTime)){
     				//find price
-    				priceP=ele.findElement(By.className(priceParent));
-    				priceE=priceP.findElement(By.xpath(pricePath));
+    				priceE=priceEs.get(counter);
     				priceInt=Integer.parseInt(priceE.getText());
-    				if (1==i){
+    				if (0==low){
     					low=priceInt;
+    					lowElem=ecoA.get(counter);
     				}  
     				else{
     					if (low>priceInt){
-    						low=priceInt;
-    						
-    						lowElem=priceP.findElement(By.tagName("a"));
+    						low=priceInt;    						
+    						lowElem=ecoA.get(counter);
     					}
     				}
     			}
     	    } catch (Exception e) { /* ignore this element */
-    	    	if (1==i){i=1;}
-    	    }
+    	    	}
+    		counter=counter+1;
     	  }
     	if (lowElem!=null){
     		lowElem.click();
-    	}
-    	
+    	}    
     }
 
     public static boolean timeAfter(String tA, String tB){
