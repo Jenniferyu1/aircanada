@@ -150,19 +150,32 @@ public class airCanada {
     	
     	String pricePath="//a[@class='ac_btn-fare-price active-fare']/span[@class='ac_price font_face_l is_bold_fare']/span";
     	String ecoAPath="//*[@id='flightDetailInfo0']/div[2]/ul/li[@class='ac_itinerary']/ul/li[2]/a";
+    	/* for business price -start*/
+    	String businessPrice="//div[@id='flightDetailInfo0']/div[2]/ul/li[@class='ac_itinerary']/ul/li[7]/a/span/span[@data-ng-bind='formatDisplayedFareAmountWithCommas(totalFareBusinessLowest.fare)']";
+    	String busiAPath="//*[@id='flightDetailInfo0']/div[2]/ul/li[@class='ac_itinerary']/ul/li[7]/a";
+    	/*for business end */
+    	
+    	
     	WebElement timeEAncent=driver.findElements(By.xpath("//div[@style='overflow:hidden;']")).get(0);
     	List<WebElement> timeEs=timeEAncent.findElements(By.xpath(timePath));
-    	List<WebElement> priceEs=driver.findElements(By.xpath(pricePath));
     	
+    	/*for economy flex price -start
+    	List<WebElement> priceEs=driver.findElements(By.xpath(pricePath));    	
     	List<WebElement> ecoA=driver.findElements(By.xpath(ecoAPath));
+    	//for economy flex price -end*/
     	
+    	// for business price -start
+    	List<WebElement> priceEs= driver.findElements(By.xpath(businessPrice));    	
+    	List<WebElement> ecoA=driver.findElements(By.xpath(busiAPath));
+    	//for business price -end*/
     	for (WebElement ele : timeEs){
+    		
     		try {
     			timeN=ele.getText();
     			if (timeAfter(timeN, afterTime)){
     				//find price
     				priceE=priceEs.get(counter);
-    				priceInt=Integer.parseInt(priceE.getText());
+    				priceInt=Integer.parseInt(priceE.getText().replace(",",""));
     				if (0==low){
     					low=priceInt;
     					lowElem=ecoA.get(counter);
